@@ -1,0 +1,40 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: elasticsearch-indices.frankkoornstra.nl
+spec:
+  group: frankkoornstra.nl
+  version: v1alpha1
+  scope: Namespaced
+  preserveUnknownFields: false
+  names:
+    plural: elasticsearch-indices
+    singular: elasticsearch-index
+    kind: ElasticsearchIndex
+    categories: [elasticsearch]
+  validation:
+    openAPIV3Schema:
+      type: object
+      properties:
+        spec:
+          type: object
+          required: [definition]
+          properties:
+            hosts:
+              type: array
+              description: List of hosts names which can include scheme, host name and port.
+              items:
+                type: string
+                nullable: false
+                pattern: "^\\S+$"
+            definition:
+              type: object
+              description: A valid index definition as described in the documentation of Elasticsearch
+              properties:
+                settings:
+                  type: object
+                aliases:
+                  type: object
+                mappings:
+                  type: object
+

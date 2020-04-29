@@ -1,0 +1,11 @@
+apiVersion: frankkoornstra.nl/v1alpha1
+kind: ElasticsearchTemplate
+metadata:
+  name: template-test
+spec:
+  hosts:
+    - "localhost:9200"
+  definition:
+    index_patterns: ["test*"]
+    settings:
+      number_of_shards: 3

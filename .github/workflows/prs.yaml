@@ -1,0 +1,27 @@
+name: Check PRs
+on: [push, pull_request]
+env:
+  ELASTICSEARCH_HOST: elasticsearch
+  DOCKER_IMAGE_NAME: docker.pkg.github.com/${{ github.repository }}:build-${{ github.sha }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_REGISTRY_URL: docker.pkg.github.com
+  DOCKER_BUILDKIT: 1
+jobs:
+  buildContainers:
+    name: Build containers
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Login to Github Docker registry
+        uses: actions-hub/docker/login@master
+
+      - name: Build test container
+        run: docker build --target=test -t $DOCKER_IMAGE_NAME .
+
+      - name: Push test container to Github Docker registry
+        uses: actions-hub/docker@master
+        with:
+          args: $DOCKER_IMAGE_NAME
+
