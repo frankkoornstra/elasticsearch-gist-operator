@@ -29,3 +29,4 @@ Since the first iterations don't allow you to provide any (overriding) mappings 
 - [x] Upsert index aliases (without filters or routing)
 - [ ] Integration tests with Elasticsearch
 - [ ] Status subresource
+- [ ] Setup PR and release flow with Github actions
