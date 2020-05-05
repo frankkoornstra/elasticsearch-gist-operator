@@ -1,0 +1,9 @@
+apiVersion: frankkoornstra.nl/v1alpha1
+kind: ElasticsearchIndex
+metadata:
+  name: test
+spec:
+  definition:
+    settings:
+      number_of_shards: 3
+    aliases: {}

@@ -1,0 +1,43 @@
+name: Build and test code
+on: [push]
+env:
+  ELASTICSEARCH_HOST: elasticsearch
+  DOCKER_IMAGE_SHORT_NAME: ${{ github.repository }}/build
+  DOCKER_IMAGE_FULL_NAME: docker.pkg.github.com/${{ github.repository }}/build:${{ github.sha }}
+  DOCKER_IMAGE_TAG: ${{ github.sha }}
+  DOCKER_IMAGE_FILENAME: build-${{ github.sha }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_REGISTRY_URL: docker.pkg.github.com
+  DOCKER_BUILDKIT: 1
+jobs:
+  createImages:
+    name: Create test docker images
+    runs-on: ubuntu-18.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build docker test image with caching
+        uses: whoan/docker-build-with-cache-action@v5
+        with:
+          username: "${{ secrets.DOCKER_USERNAME }}"
+          password: "${{ secrets.DOCKER_PASSWORD }}"
+          image_name: "${{ env.DOCKER_IMAGE_SHORT_NAME }}"
+          image_tag: "${{ env.DOCKER_IMAGE_TAG }}"
+          registry: docker.pkg.github.com
+          build_extra_args: --target=test
+
+  runTests:
+    name: Run tests
+    needs: [createImages]
+    runs-on: ubuntu-18.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run integration tests
+        run: |
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.pkg.github.com
+          docker-compose up -d
+          docker run --network operator -e ELASTICSEARCH_HOST="elasticsearch:9200" $DOCKER_IMAGE_FULL_NAME ./gradlew check

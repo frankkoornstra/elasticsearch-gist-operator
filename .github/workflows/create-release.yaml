@@ -1,0 +1,50 @@
+name: Create release
+on:
+  milestone:
+    types: [closed]
+env:
+  MILESTONE_TITLE_FILE: milestone-title.txt
+  MILESTONE_RELEASE_NOTES_FILE: release_file.md
+jobs:
+  create-release:
+    runs-on: ubuntu-18.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Create Release Notes
+        uses: docker://decathlon/release-notes-generator-action:2.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Output release notes
+        id: notes
+        run: |
+          notes=$(cat $MILESTONE_RELEASE_NOTES_FILE)
+          notes="${notes//'%'/'%25'}"
+          notes="${notes//$'\n'/'%0A'}"
+          notes="${notes//$'\r'/'%0D'}"
+          echo ::set-output name=notes::$notes
+
+      - name: Get milestone title
+        id: title
+        run: |
+          cat $GITHUB_EVENT_PATH | jq -r .milestone.title >> $MILESTONE_TITLE_FILE
+          echo "::set-output name=title::$(cat $MILESTONE_TITLE_FILE)"
+
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.17.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CUSTOM_TAG: ${{ steps.title.outputs.title }}
+
+      - name: Create Release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.title.outputs.title }}
+          release_name: ${{ steps.title.outputs.title }}
+          body: ${{ steps.notes.outputs.notes }}
+          draft: true
+          prerelease: true
