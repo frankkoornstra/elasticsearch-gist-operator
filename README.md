@@ -15,12 +15,35 @@ Usually one of the first steps is to setup [templates](https://www.elastic.co/gu
 They contain mappings and settings as well as a pattern that can match to-be created indices.
 Once an index gets created that matches one or more template patterns, all the contents of those templates will be applied to the new index.
 
-You can create templates with this operator by sticking to [the definition of the custom resource](crd/crd-template.yaml), an example is [also availabe](crd/template.yaml)
+You can create and update templates with this operator by sticking to [the definition of the custom resource](crd/crd-template.yaml), an example is [also availabe](crd/template.yaml)
 
 ## Indices
 
 The bread and butter of Elasticsearch; this will contain all your documents.
-Since the first iterations don't allow you to provide any (overriding) mappings or settings, you will need to create templates first to control those.
+Indices have three core components: settings, a mapping and aliases.
+All three of them can be managed by this operator, although there are some things to take into consideration, outlined below.
+
+You can create and update indices with this operator by sticking to [the definition of the custom resource](crd/crd-index.yaml), an example is [also availabe](crd/index.yaml)
+
+### Settings
+
+Settings [come in two kinds](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-modules-settings): static or dynamic.
+
+When you _create_ an index, all settings in your CRD will be applied.
+When you _update_ and index, only the dynamic settings will be applied.
+
+### Mapping
+
+Mappings adhere to the concept of backwards compatibility (BC), for details browse the Elasticsearch documentation on what is and is not BC.
+
+Whenever you update a mapping in an index in a non-BC manner, the update will fail.
+This will be reflected by a `FAILED` status object in the CRD, the reason why it failed will also be in the status object.
+
+### Aliases
+
+Simple: it'll remove existing aliases that aren't in the CRD anymore, it will ad the ones that don't exist yet.
+
+*This operator does not support filters on aliases (yet, PRs welcome)*
 
 ## Roadmap
 
