@@ -10,6 +10,23 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.slf4j.LoggerFactory
 import java.io.IOException
 
+enum class MDCKey {
+    RESOURCE;
+
+    override fun toString(): String {
+        return super.toString().toLowerCase()
+    }
+}
+
+enum class Status {
+    ACKNOWLEDGED,
+    FAILED;
+
+    override fun toString(): String {
+        return super.toString().toLowerCase().capitalize()
+    }
+}
+
 sealed class GenericResult()
 class SuccessResult() : GenericResult()
 class FailedResult(val reason: String) : GenericResult()
