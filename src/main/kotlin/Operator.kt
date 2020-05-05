@@ -1,5 +1,6 @@
 package nl.frankkoornstra.elasticsearchgistoperator
 
+import java.io.IOException
 import org.apache.http.HttpHost
 import org.elasticsearch.ElasticsearchException
 import org.elasticsearch.action.ActionRequestValidationException
@@ -8,7 +9,22 @@ import org.elasticsearch.client.IndicesClient
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.slf4j.LoggerFactory
-import java.io.IOException
+import org.springframework.boot.Banner
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Bean
+
+fun main(args: Array<String>) {
+    runApplication<Application>(*args) {
+        setBannerMode(Banner.Mode.OFF)
+    }
+}
+
+@SpringBootApplication
+class Application {
+    @Bean
+    fun createHandler() = ResourceHandler()
+}
 
 enum class MDCKey {
     RESOURCE;
