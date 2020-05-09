@@ -1,5 +1,10 @@
 # Elasticsearch Gist Operator
 
+![Current build status](https://github.com/frankkoornstra/elasticsearch-gist-operator/workflows/Build%20and%20test%20code/badge.svg)
+![Latest relese](https://img.shields.io/github/v/release/frankkoornstra/elasticsearch-gist-operator)
+![Commit activity](https://img.shields.io/github/commit-activity/m/frankkoornstra/elasticsearch-gist-operator)
+![Last commit](https://img.shields.io/github/last-commit/frankkoornstra/elasticsearch-gist-operator)
+
 Operator for Kubernetes that will take care of the [gist](https://www.dictionary.com/browse/gist) of your Elasticsearch cluster, managing your:
 * Templates
 * Indices
