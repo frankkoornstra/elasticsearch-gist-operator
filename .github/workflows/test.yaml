@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build docker test image with caching
+      - name: Build docker test image
         uses: whoan/docker-build-with-cache-action@v5
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
@@ -28,8 +28,8 @@ jobs:
           registry: docker.pkg.github.com
           build_extra_args: --target=test
 
-  runTests:
-    name: Run tests
+  runIntegrationTests:
+    name: Run integration tests
     needs: [createImages]
     runs-on: ubuntu-18.04
     timeout-minutes: 10
@@ -40,4 +40,37 @@ jobs:
         run: |
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.pkg.github.com
           docker-compose up -d
-          docker run --network operator -e ELASTICSEARCH_HOST="elasticsearch:9200" $DOCKER_IMAGE_FULL_NAME ./gradlew check
+          docker run --network operator -e ELASTICSEARCH_HOST="elasticsearch:9200" $DOCKER_IMAGE_FULL_NAME ./gradlew -DincludeTags=integration test
+
+  runCheck:
+    name: Run checks (without integration tests)
+    needs: [createImages]
+    runs-on: ubuntu-18.04
+    timeout-minutes: 10
+    steps:
+      - name: Run checks
+        run: |
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.pkg.github.com
+          docker run $DOCKER_IMAGE_FULL_NAME ./gradlew -DexcludeTags=integration cleanTest check jacocoTestCoverageVerification
+
+  createReports:
+    name: Create reports
+    needs: [createImages]
+    runs-on: ubuntu-18.04
+    timeout-minutes: 10
+    steps:
+      - name: Create reports
+        run: |
+          mkdir reports
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.pkg.github.com
+          docker run --volume $(pwd)/reports:/app/build/reports $DOCKER_IMAGE_FULL_NAME ./gradlew -DexcludeTags=integration test jacocoTestReport
+
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v1
+        if: ${{ always() }}
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: reports/jacoco/test/jacocoTestReport.xml
+          flags: unittests
+          name: build-${{ github.sha }}
+          fail_ci_if_error: false

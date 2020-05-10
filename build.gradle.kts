@@ -9,6 +9,7 @@ plugins {
     id("org.springframework.boot") version "2.2.6.RELEASE"
     id("com.diffplug.gradle.spotless") version "3.29.0"
     id("com.github.ben-manes.versions") version "0.28.0"
+    id("jacoco")
 }
 
 repositories {
@@ -35,6 +36,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testImplementation("io.mockk:mockk:1.10.+")
 }
 
 tasks.test {
@@ -49,6 +51,38 @@ tasks.test {
             excludeTags(excludedTags)
         }
     }
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+val excludeFromCoverage = listOf(
+    "Application.class",
+    "OperatorKt.class"
+).map { "nl/frankkoornstra/elasticsearchgistoperator/$it" }
+tasks.jacocoTestReport {
+    reports {
+        xml.isEnabled = true
+        csv.isEnabled = false
+        html.isEnabled = true
+    }
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude(excludeFromCoverage)
+        }
+    )
+}
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "1.000".toBigDecimal()
+            }
+        }
+    }
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude(excludeFromCoverage)
+        }
+    )
 }
 
 tasks.withType<DependencyUpdatesTask> {

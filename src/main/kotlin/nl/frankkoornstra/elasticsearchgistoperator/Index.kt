@@ -51,10 +51,18 @@ class IndexController(val handler: ResourceHandler) : ResourceController<Index> 
         return Optional.of(
             when (result) {
                 is SuccessResult -> resource.also {
-                    it.status = IndexStatus(status = Status.ACKNOWLEDGED.toString(), message = "")
+                    it.status =
+                        IndexStatus(
+                            status = Status.ACKNOWLEDGED.toString(),
+                            message = ""
+                        )
                 }
                 is FailedResult -> resource.also {
-                    it.status = IndexStatus(status = Status.FAILED.toString(), message = result.reason)
+                    it.status =
+                        IndexStatus(
+                            status = Status.FAILED.toString(),
+                            message = result.reason
+                        )
                 }
             }
 
@@ -92,15 +100,16 @@ class IndexController(val handler: ResourceHandler) : ResourceController<Index> 
 
         log.info("Updating aliases")
         val newAliases = definition.aliases ?: mapOf()
-        val existingAliases =
-            get(GetIndexRequest(indexName), RequestOptions.DEFAULT).aliases.get(resource.metadata.name) ?: listOf()
+        val existingAliases = get(GetIndexRequest(indexName), RequestOptions.DEFAULT)
+            .aliases
+            .get(resource.metadata.name) ?: listOf()
         val aliasesRequest = IndicesAliasesRequest()
 
         // Remove extra aliases from the index
         existingAliases
             .filter { !newAliases.keys.contains(it.alias) }
             .forEach {
-                log.info("Removing alias ${it.alias}")
+                log.info("Deleting alias ${it.alias}")
                 val action = IndicesAliasesRequest
                     .AliasActions
                     .remove()

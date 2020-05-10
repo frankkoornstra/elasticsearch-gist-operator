@@ -41,10 +41,18 @@ class TemplateController(val handler: ResourceHandler) : ResourceController<Temp
         return Optional.of(
             when (result) {
                 is SuccessResult -> resource.also {
-                    it.status = TemplateStatus(status = Status.ACKNOWLEDGED.toString(), message = "")
+                    it.status =
+                        TemplateStatus(
+                            status = Status.ACKNOWLEDGED.toString(),
+                            message = ""
+                        )
                 }
                 is FailedResult -> resource.also {
-                    it.status = TemplateStatus(status = Status.FAILED.toString(), message = result.reason)
+                    it.status =
+                        TemplateStatus(
+                            status = Status.FAILED.toString(),
+                            message = result.reason
+                        )
                 }
             }
         )
