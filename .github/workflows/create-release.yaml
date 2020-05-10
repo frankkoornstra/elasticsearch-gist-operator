@@ -32,7 +32,7 @@ jobs:
           cat $GITHUB_EVENT_PATH | jq -r .milestone.title >> $MILESTONE_TITLE_FILE
           echo "::set-output name=title::$(cat $MILESTONE_TITLE_FILE)"
 
-      - name: Bump version and push tag
+      - name: Tag version
         uses: anothrNick/github-tag-action@1.17.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
