@@ -79,22 +79,30 @@ class ResourceHandler {
     ): GenericResult {
         try {
             val client = clientSource.createClient()
-            val result = client.indices().run { request() }
+            val result = client.indices().run(request)
             if (!result.isAcknowledged) {
-                throw IOException("not acknowledged")
+                throw ElasticsearchException("not acknowledged")
             }
         } catch (e: ClientSource.CouldNotCreateClient) {
             logger.error("Could not create client: $e")
-            return FailedResult("Could not create client $e")
+            return FailedResult(
+                "Could not create client $e"
+            )
         } catch (e: ActionRequestValidationException) {
-            logger.info("Validation failed: ${e.validationErrors()}")
-            return FailedResult("Validation failed: ${e.validationErrors()}")
+            logger.error("Validation failed: ${e.validationErrors()}")
+            return FailedResult(
+                "Validation failed: ${e.validationErrors()}"
+            )
         } catch (e: IOException) {
-            logger.info("IO failed: ${e.cause}")
-            return FailedResult(e.cause.toString())
+            logger.error("IO failed: ${e.message} ${e.cause}")
+            return FailedResult(
+                "IO failed: ${e.message} ${e.cause}"
+            )
         } catch (e: ElasticsearchException) {
-            logger.info("Elasticsearch threw a fit: ${e.detailedMessage}")
-            return FailedResult(e.detailedMessage)
+            logger.error("Elasticsearch failed: ${e.detailedMessage}")
+            return FailedResult(
+                "Elasticsearch failed: ${e.detailedMessage}"
+            )
         }
 
         logger.info("Success")
