@@ -14,9 +14,11 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 @Tag("integration")
-class IndexIntegrationTest {
+internal class IndexIntegrationTest {
     private val index = Index(
-        status = IndexStatus(status = ""),
+        status = IndexStatus(
+            status = ""
+        ),
         spec = IndexSpec(
             definition = IndexDefinition(
                 settings = mapOf(

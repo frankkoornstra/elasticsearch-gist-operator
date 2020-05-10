@@ -14,9 +14,11 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 @Tag("integration")
-class TemplateIntegrationTest {
+internal class TemplateIntegrationTest {
     private val template = Template(
-        status = TemplateStatus(status = ""),
+        status = TemplateStatus(
+            status = ""
+        ),
         spec = TemplateSpec(
             definition = mapOf(
                 "index_patterns" to "test*"
