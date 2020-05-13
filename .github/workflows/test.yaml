@@ -1,5 +1,5 @@
 name: Build and test code
-on: [push]
+on: [pull_request]
 env:
   ELASTICSEARCH_HOST: elasticsearch
   DOCKER_IMAGE_SHORT_NAME: ${{ github.repository }}/build
