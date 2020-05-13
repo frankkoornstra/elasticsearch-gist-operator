@@ -13,7 +13,19 @@ Operator for Kubernetes that will take care of the [gist](https://www.dictionary
 This operator is the glue between the state of your Elasticsearch cluster and Kubernetes.
 By using Elasticsearch's excellent [Java client](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/index.html), it wil try to create, update and delete the custom resources defined in [this directory](crd/).
 
-**The operator's alpha release will only be compatible with Elasticsearch 6.8.**
+## Compatibility and versioning
+
+The Operator is semantically versioned. It obviously has a huge dependency on Elasticsearch so versioning of the Operator is tightly bound to the Elasticsearch version.
+
+Any bumps in parts of the Elasticsearch library version will always result in a bump in the same part of that version in the Operator; ie a major version bump in the Elasticsearch library results in a major version bump of the Operator version, same with minor and patch.
+
+Bumps in the Operator major, minor and patch versions can still happen independently so multiple major versions of the operator might be compatible with the same major Elatiscsearch version (although we'll do our best to avoid this).
+
+In the table below you can find the compatibility between versions of this operator and Elasticsearch.
+
+| Operator    | Elasticsearch |
+|-------------|---------------|
+| 0.1 (alpha) | 6.8           |
 
 ## Templates
 
