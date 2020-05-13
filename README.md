@@ -1,9 +1,10 @@
 # Elasticsearch Gist Operator
 
-![Current build status](https://github.com/frankkoornstra/elasticsearch-gist-operator/workflows/Build%20and%20test%20code/badge.svg)
-![Latest relese](https://img.shields.io/github/v/release/frankkoornstra/elasticsearch-gist-operator)
-![Commit activity](https://img.shields.io/github/commit-activity/m/frankkoornstra/elasticsearch-gist-operator)
-![Last commit](https://img.shields.io/github/last-commit/frankkoornstra/elasticsearch-gist-operator)
+[![Current build status](https://github.com/frankkoornstra/elasticsearch-gist-operator/workflows/Build%20and%20test%20code/badge.svg)](https://github.com/frankkoornstra/elasticsearch-gist-operator/actions?query=branch%3Amaster)
+[![codecov](https://codecov.io/gh/frankkoornstra/elasticsearch-gist-operator/branch/master/graph/badge.svg)](https://codecov.io/gh/frankkoornstra/elasticsearch-gist-operator)
+[![Latest relese](https://img.shields.io/github/v/release/frankkoornstra/elasticsearch-gist-operator)](https://github.com/frankkoornstra/elasticsearch-gist-operator/releases)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/frankkoornstra/elasticsearch-gist-operator)](https://github.com/frankkoornstra/elasticsearch-gist-operator/pulse)
+[![Last commit](https://img.shields.io/github/last-commit/frankkoornstra/elasticsearch-gist-operator)](https://github.com/frankkoornstra/elasticsearch-gist-operator/commits/master)
 
 Operator for Kubernetes that will take care of the [gist](https://www.dictionary.com/browse/gist) of your Elasticsearch cluster, managing your:
 * Templates
