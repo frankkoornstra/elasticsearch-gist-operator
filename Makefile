@@ -6,33 +6,35 @@ SHELL=bash
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(abspath $(patsubst %/,%,$(dir $(mkfile_path))))
 
-reset:
-	kubectl delete daemonsets,replicasets,services,deployments,pods,rc,ingresses,elasticsearch-indices.frankkoornstra.nl,elasticsearch-templates.frankkoornstra.nl --all --grace-period=0 --force || true
+up: minikube definitionUpdate environment # Your one stop shop to start the project
 
-definitionUpdate:
+minikube:
+	minikube start
+
+reset: # Forcefully removes all and any traces of existing custom resources
+	kubectl delete elasticsearch-indices.frankkoornstra.nl,elasticsearch-templates.frankkoornstra.nl --all --grace-period=0 --force || true
+
+definitionUpdate: # Updates the custom resource definitions
 	kubectl apply -f ${current_dir}/crd/crd-template.yaml
 	kubectl apply -f ${current_dir}/crd/crd-index.yaml
 
-templateUpdate:
+templateUpdate: # Updates the example template custom resource
 	kubectl apply -f ${current_dir}/crd/template.yaml
 
-templateDelete:
+templateDelete: # Deletes the example template custom resource
 	kubectl delete -f ${current_dir}/crd/template.yaml || true
 
-indexUpdate:
+indexUpdate: # Updates the example index custom resource
 	kubectl apply -f ${current_dir}/crd/index.yaml
 
-indexDelete:
+indexDelete: # Deletes the example index custom resource
 	kubectl delete -f ${current_dir}/crd/index.yaml || true
 
-watch:
-	kubectl get pods --watch
-
-up:
+environment: # Creates the Elasticsearch cluster and tooling around it
 	docker-compose up -d
 
-dockerizeJar:
+dockerizeJar: # Creates the Docker runtime image
 	docker build --target=runtime -t elasticsearch-gist-operator .
 
-dockerizeTest:
+dockerizeTest: # Creates the Docker test image
 	docker build --target=test -t elasticsearch-gist-operator .
