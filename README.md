@@ -46,7 +46,13 @@ In the table below you can find the compatibility between versions of this opera
 |-------------|---------------|
 | 0.1 (alpha) | 6.8           |
 
-## Templates
+## Resources
+
+The Operator controls the following resources:
+* Templates
+* Indices
+
+### Templates
 
 Usually one of the first steps is to setup [templates](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/indices-templates.html#indices-templates).
 They contain mappings and settings as well as a pattern that can match to-be created indices.
@@ -54,7 +60,7 @@ Once an index gets created that matches one or more template patterns, all the c
 
 You can create and update templates with this operator by sticking to [the definition of the custom resource](crd/crd-template.yaml), an example is [also availabe](crd/template.yaml)
 
-## Indices
+### Indices
 
 The bread and butter of Elasticsearch; this will contain all your documents.
 Indices have three core components: settings, a mapping and aliases.
@@ -62,21 +68,21 @@ All three of them can be managed by this operator, although there are some thing
 
 You can create and update indices with this operator by sticking to [the definition of the custom resource](crd/crd-index.yaml), an example is [also availabe](crd/index.yaml)
 
-### Settings
+#### Settings
 
 Settings [come in two kinds](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-modules-settings): static or dynamic.
 
 When you _create_ an index, all settings in your CRD will be applied.
 When you _update_ and index, only the dynamic settings will be applied.
 
-### Mapping
+#### Mapping
 
 Mappings adhere to the concept of backwards compatibility (BC), for details browse the Elasticsearch documentation on what is and is not BC.
 
 Whenever you update a mapping in an index in a non-BC manner, the update will fail.
 This will be reflected by a `FAILED` status object in the CRD, the reason why it failed will also be in the status object.
 
-### Aliases
+#### Aliases
 
 Simple: it'll remove existing aliases that aren't in the CRD anymore, it will ad the ones that don't exist yet.
 
@@ -89,4 +95,5 @@ Simple: it'll remove existing aliases that aren't in the CRD anymore, it will ad
 - [x] Upsert index aliases (without filters or routing)
 - [x] Integration tests with Elasticsearch
 - [x] Github Actions to run tests for PRs
+- [ ] Release process
 - [ ] Status subresource
