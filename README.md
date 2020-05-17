@@ -13,6 +13,25 @@ Operator for Kubernetes that will take care of the [gist](https://www.dictionary
 This operator is the glue between the state of your Elasticsearch cluster and Kubernetes.
 By using Elasticsearch's excellent [Java client](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/index.html), it wil try to create, update and delete the custom resources defined in [this directory](crd/).
 
+## Run it
+
+**Always make sure only 1 instance of the Operator is running at the same time to prevent concurrency issues**
+
+The Docker image for this repository is available at `docker.pkg.github.com/frankkoornstra/elasticsearch-gist-operator/elasticsearch-gist-operator:{version tag}`. To use Github's Docker repository, you will [need to authenticate](https://help.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-docker-for-use-with-github-packages#authenticating-to-github-packages).
+
+You'll probably want to deploy the Operator inside Kubernetes. If you want to see a simplistic example of how to do that, clone this repository and - _only when connected to your development cluster!_ - run:
+```bash
+cd kubernetes-resources
+make GITHUB_USERNAME=<your github username> GITHUB_TOKEN=<github token>
+```
+
+It will:
+1. Create a secret, needed to pull the docker image from Github's Docker repository. You'll need to [create a token](https://github.com/settings/tokens) with `read:packages` capabilities to do this.
+1. Update the CRDs that the operator defines
+1. Create a deployment for the Operator
+
+By using the [`Recreate`](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#recreate-deployment) deployment strategy in Kubernetes, you make sure only one instance of the Operator is running at the same time.
+
 ## Compatibility and versioning
 
 The Operator is semantically versioned. It obviously has a huge dependency on Elasticsearch so versioning of the Operator is tightly bound to the Elasticsearch version.
