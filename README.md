@@ -95,5 +95,5 @@ Simple: it'll remove existing aliases that aren't in the CRD anymore, it will ad
 - [x] Upsert index aliases (without filters or routing)
 - [x] Integration tests with Elasticsearch
 - [x] Github Actions to run tests for PRs
-- [ ] Release process
+- [x] Release process
 - [ ] Status subresource
