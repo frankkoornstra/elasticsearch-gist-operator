@@ -1,0 +1,28 @@
+name: Tag Docker image version
+on:
+  push:
+    tags:
+      - v*
+env:
+  MILESTONE_TITLE_FILE: milestone-title.txt
+  MILESTONE_RELEASE_NOTES_FILE: release_file.md
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_SOURCE_IMAGE: docker.pkg.github.com/${{ github.repository }}/build:${{ github.sha }}
+  DOCKER_TARGET_IMAGE_BASE: docker.pkg.github.com/${{ github.repository }}/elasticsearch-gist-operator
+jobs:
+  tag-and-push:
+    runs-on: ubuntu-18.04
+    timeout-minutes: 10
+    steps:
+      - name: Tag and push Docker image with version
+        run: |
+          export VERSION=$(echo ${GITHUB_REF//v} | cut -d / -f 3)
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.pkg.github.com
+          docker pull $DOCKER_SOURCE_IMAGE
+          docker tag $DOCKER_SOURCE_IMAGE $DOCKER_TARGET_IMAGE_BASE:latest
+          docker push $DOCKER_TARGET_IMAGE_BASE:latest
+          docker tag $DOCKER_SOURCE_IMAGE $DOCKER_TARGET_IMAGE_BASE:${VERSION%.*.*}
+          docker push $DOCKER_TARGET_IMAGE_BASE:${VERSION%.*.*}
+          docker tag $DOCKER_SOURCE_IMAGE $DOCKER_TARGET_IMAGE_BASE:${VERSION%.*}
+          docker push $DOCKER_TARGET_IMAGE_BASE:${VERSION%.*}

@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-gist-operator-app
+  labels:
+    app: elasticsearch-gist-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch-gist-operator
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: elasticsearch-gist-operator
+    spec:
+      imagePullSecrets:
+        - name: github-docker-secret
+      containers:
+        - name: operator
+          image: docker.pkg.github.com/frankkoornstra/elasticsearch-gist-operator/elasticsearch-gist-operator:latest # Using a version tag is recommended for production use
+          imagePullPolicy: Always

@@ -15,8 +15,7 @@ reset: # Forcefully removes all and any traces of existing custom resources
 	kubectl delete elasticsearch-indices.frankkoornstra.nl,elasticsearch-templates.frankkoornstra.nl --all --grace-period=0 --force || true
 
 definitionUpdate: # Updates the custom resource definitions
-	kubectl apply -f ${current_dir}/crd/crd-template.yaml
-	kubectl apply -f ${current_dir}/crd/crd-index.yaml
+	for f in ${current_dir}/crd/crd-*.yaml; do kubectl apply -f $${f}; done
 
 templateUpdate: # Updates the example template custom resource
 	kubectl apply -f ${current_dir}/crd/template.yaml

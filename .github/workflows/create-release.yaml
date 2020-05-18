@@ -10,7 +10,16 @@ jobs:
     runs-on: ubuntu-18.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v2
+      - name: Get milestone title
+        id: title
+        run: |
+          cat $GITHUB_EVENT_PATH | jq -r .milestone.title >> $MILESTONE_TITLE_FILE
+          echo "::set-output name=title::$(cat $MILESTONE_TITLE_FILE)"
+
+      - name: Ensure tag is already present
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.title.outputs.title }}
 
       - name: Create Release Notes
         uses: docker://decathlon/release-notes-generator-action:2.0.1
@@ -26,19 +35,7 @@ jobs:
           notes="${notes//$'\r'/'%0D'}"
           echo ::set-output name=notes::$notes
 
-      - name: Get milestone title
-        id: title
-        run: |
-          cat $GITHUB_EVENT_PATH | jq -r .milestone.title >> $MILESTONE_TITLE_FILE
-          echo "::set-output name=title::$(cat $MILESTONE_TITLE_FILE)"
-
-      - name: Tag version
-        uses: anothrNick/github-tag-action@1.17.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CUSTOM_TAG: ${{ steps.title.outputs.title }}
-
-      - name: Create Release
+      - name: Create draft release
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
