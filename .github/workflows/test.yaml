@@ -17,6 +17,16 @@ env:
   DOCKER_REGISTRY_URL: docker.pkg.github.com
   DOCKER_BUILDKIT: 1
 jobs:
+  cancel:
+    name: Cancel previous workflow on same branch
+    runs-on: ubuntu-18.04
+    timeout-minutes: 3
+    steps:
+      - uses: styfle/cancel-workflow-action@0.3.1
+        with:
+          workflow_id: 1177419
+          access_token: ${{ github.token }}
+
   createImages:
     name: Create test docker images
     runs-on: ubuntu-18.04
