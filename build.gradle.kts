@@ -6,8 +6,8 @@ plugins {
 
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
-    id("org.springframework.boot") version "2.2.6.RELEASE"
-    id("com.diffplug.gradle.spotless") version "3.29.0"
+    id("org.springframework.boot") version "2.3.0.RELEASE"
+    id("com.diffplug.gradle.spotless") version "4.1.0"
     id("com.github.ben-manes.versions") version "0.28.0"
     id("jacoco")
 }
@@ -19,7 +19,6 @@ repositories {
 
 val elasticsearchVersion = "6.8.+"
 val operatorFrameworkVersion = "1.2.+"
-val springBootVersion = "2.2.6.RELEASE"
 val junitVersion = "5.6.+"
 
 dependencies {
@@ -33,7 +32,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.+")
     implementation("org.apache.logging.log4j:log4j-core:2.13.+")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.3.0.RELEASE")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testImplementation("io.mockk:mockk:1.10.+")
